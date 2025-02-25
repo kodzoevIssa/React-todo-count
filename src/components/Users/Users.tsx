@@ -22,10 +22,10 @@ interface UserData {
 function Users() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
-  const isMounted = useRef(true); // Создаём ref
+  const isMounted = useRef(true); 
 
   useEffect(() => {
-    isMounted.current = true; // Компонент смонтирован
+    isMounted.current = true; 
 
     const fetchData = async () => {
       try {
@@ -70,7 +70,7 @@ function Users() {
     fetchData();
 
     return () => {
-      isMounted.current = false; // Компонент размонтирован
+      isMounted.current = false; 
     };
   }, []);
 
