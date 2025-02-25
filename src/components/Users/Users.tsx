@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./Users.css";
 import userImage from "../../assets/User.svg";
 
@@ -22,8 +22,11 @@ interface UserData {
 function Users() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
+  const isMounted = useRef(true); // Создаём ref
 
   useEffect(() => {
+    isMounted.current = true; // Компонент смонтирован
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -37,23 +40,38 @@ function Users() {
           const users: User[] = await usersRes.json();
           const todos: Todo[] = await todosRes.json();
 
+          const todoCountMap = new Map<number, number>();
+
+          todos.forEach((todo) => {
+            todoCountMap.set(
+              todo.userId,
+              (todoCountMap.get(todo.userId) || 0) + 1
+            );
+          });
+
           const userTodoCount = users.map((user) => ({
             id: user.id,
             username: user.username,
             email: user.email,
-            todoCount: todos.filter((todo) => todo.userId === user.id).length,
+            todoCount: todoCountMap.get(user.id) || 0,
           }));
 
-          setUsers(userTodoCount);
-          setLoading(false);
+          if (isMounted.current) {
+            setUsers(userTodoCount);
+            setLoading(false);
+          }
         }, 1000);
       } catch (error) {
         console.error("Ошибка при загрузке:", error);
-        setLoading(false);
+        if (isMounted.current) setLoading(false);
       }
     };
 
     fetchData();
+
+    return () => {
+      isMounted.current = false; // Компонент размонтирован
+    };
   }, []);
 
   if (loading) {

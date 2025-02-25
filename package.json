@@ -1,9 +1,12 @@
 {
+  "homepage": "https://kodzoevIssa.github.io/React-todo-count",
   "name": "react-ts-todos-api",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
